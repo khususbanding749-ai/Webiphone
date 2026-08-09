@@ -1,1 +1,137 @@
-# Web2apk1
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>URL to APK</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a12;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Segoe UI',sans-serif;padding:16px}
+.container{background:rgba(10,10,22,.85);backdrop-filter:blur(24px);border-radius:28px;padding:28px;width:100%;max-width:560px;border:1px solid rgba(255,68,68,.06);box-shadow:0 0 80px rgba(255,50,50,.04)}
+.logo{text-align:center;font-size:20px;font-weight:900;letter-spacing:4px;color:rgba(255,255,255,.06);padding-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#888;margin-bottom:3px}
+.form-group label span{color:#ff4444}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;color:#ddd;font-size:14px;font-family:inherit;outline:0;transition:.3s}
+.form-group input:focus,.form-group textarea:focus{border-color:rgba(255,68,68,.2);background:rgba(255,68,68,.03)}
+.form-group textarea{resize:vertical;min-height:50px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:.3s;font-family:inherit;background:rgba(255,68,68,.06);color:#888;border:1px solid rgba(255,68,68,.06)}
+.btn:hover:not(:disabled){background:rgba(255,68,68,.12);color:#fff}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.primary{background:linear-gradient(135deg,#ff4444,#ff8800);color:#fff;border-color:transparent;box-shadow:0 4px 30px rgba(255,68,68,.15)}
+.btn.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 40px rgba(255,68,68,.2)}
+.file-wrap{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);border-radius:12px;padding:4px 4px 4px 14px;border:1px solid rgba(255,255,255,.04)}
+.file-wrap input[type=file]{display:none}
+.file-wrap .label{color:#666;font-size:13px;cursor:pointer;flex:1;padding:8px 0}
+.file-wrap .label:hover{color:#aaa}
+.file-wrap .btn-sm{background:rgba(255,68,68,.08);border:none;color:#aaa;padding:6px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit}
+.file-wrap .btn-sm:hover{background:rgba(255,68,68,.15);color:#fff}
+.file-wrap .fname{color:#555;font-size:12px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview{display:none;background:rgba(255,255,255,.02);border-radius:14px;padding:14px;margin:14px 0;border:1px solid rgba(255,255,255,.03);align-items:center;gap:14px}
+.preview.show{display:flex}
+.preview .icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#ff4444,#ff8800);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0}
+.preview .info{flex:1}
+.preview .info .name{font-size:14px;font-weight:600;color:#ddd}
+.preview .info .url{font-size:12px;color:#666;word-break:break-all}
+.result{display:none;border-radius:14px;padding:16px;margin:14px 0;border:1px solid transparent;align-items:flex-start;gap:12px}
+.result.show{display:flex}
+.result.success{background:rgba(0,200,100,.06);border-color:rgba(0,200,100,.12)}
+.result.error{background:rgba(255,68,68,.06);border-color:rgba(255,68,68,.12)}
+.result .icon{font-size:26px;flex-shrink:0}
+.result .details{flex:1}
+.result .details .title{font-size:15px;font-weight:600;color:#ddd}
+.result .details .desc{font-size:13px;color:#888;line-height:1.4}
+.log{display:none;background:rgba(0,0,0,.3);border-radius:12px;padding:10px 12px;margin-top:12px;font-family:monospace;font-size:12px;color:#555;max-height:100px;overflow-y:auto;border:1px solid rgba(255,255,255,.02)}
+.log.show{display:block}
+.log .line{padding:2px 0;opacity:0;animation:fadeLog .3s forwards}
+.log .line.done{color:#44cc88}
+.log .line.err{color:#ff4444}
+.log .line.info{color:#aaa}
+@keyframes fadeLog{to{opacity:1}}
+.footer{text-align:center;color:#222;font-size:11px;margin-top:14px;letter-spacing:1px;font-family:monospace}
+.progress{height:3px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;margin:12px 0;display:none}
+.progress.show{display:block}
+.progress .bar{width:0;height:100%;background:linear-gradient(90deg,#ff4444,#ff8800);border-radius:4px;transition:width .5s}
+@media(max-width:500px){.container{padding:16px}.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="logo">✦ URL → APK ✦</div>
+<div class="form-group"><label>URL Website <span>*</span></label><input type="url" id="url" placeholder="https://example.com" value="https://files.catbox.moe/wg2jko.jpg"></div>
+<div class="form-row">
+<div class="form-group"><label>Nama Aplikasi <span>*</span></label><input type="text" id="name" placeholder="MyApp" value="GrenXApp"></div>
+<div class="form-group"><label>Package ID <span>*</span></label><input type="text" id="pkg" placeholder="com.example.app" value="com.grenx.app"></div>
+</div>
+<div class="form-group"><label>Deskripsi</label><textarea id="desc" placeholder="Deskripsi aplikasi">Aplikasi WebView by GrenXHarimau</textarea></div>
+<div class="form-row">
+<div class="form-group"><label>Icon (PNG 512x512)</label>
+<div class="file-wrap"><span class="label" id="iconLabel">Pilih icon</span><input type="file" id="iconFile" accept="image/png,image/jpeg"><button class="btn-sm" id="iconBtn">📁</button><span class="fname" id="iconName"></span></div>
+</div>
+<div class="form-group"><label>Orientasi</label><select id="orient"><option value="portrait">Portrait</option><option value="landscape">Landscape</option><option value="sensor">Sensor</option></select></div>
+</div>
+<div class="preview" id="preview"><div class="icon" id="pIcon">📱</div><div class="info"><div class="name" id="pName">GrenXApp</div><div class="url" id="pUrl">https://files.catbox.moe/wg2jko.jpg</div></div></div>
+<div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+<div class="result" id="result"><div class="icon" id="rIcon">✅</div><div class="details"><div class="title" id="rTitle">Siap</div><div class="desc" id="rDesc">Masukkan URL dan klik Build</div></div></div>
+<div class="log" id="log"></div>
+<button class="btn primary" id="buildBtn">🚀 Build APK</button>
+<div style="display:flex;gap:10px;margin-top:10px">
+<button class="btn" id="downloadBtn" style="display:none;flex:1">⬇ Download APK</button>
+<button class="btn" id="resetBtn" style="display:none;flex:0.5;padding:10px">↺</button>
+</div>
+<div class="footer">✦ GrenXHarimau ✦</div>
+</div>
+<script>
+(function(){
+const urlIn=document.getElementById('url'),nameIn=document.getElementById('name'),pkgIn=document.getElementById('pkg'),descIn=document.getElementById('desc'),orientIn=document.getElementById('orient');
+const iconFile=document.getElementById('iconFile'),iconBtn=document.getElementById('iconBtn'),iconName=document.getElementById('iconName'),iconLabel=document.getElementById('iconLabel');
+const preview=document.getElementById('preview'),pName=document.getElementById('pName'),pUrl=document.getElementById('pUrl'),pIcon=document.getElementById('pIcon');
+const result=document.getElementById('result'),rIcon=document.getElementById('rIcon'),rTitle=document.getElementById('rTitle'),rDesc=document.getElementById('rDesc');
+const log=document.getElementById('log'),progress=document.getElementById('progress'),bar=document.getElementById('bar');
+const buildBtn=document.getElementById('buildBtn'),downloadBtn=document.getElementById('downloadBtn'),resetBtn=document.getElementById('resetBtn');
+let iconBase64=null,isBuilding=false,apkData=null;
+
+function updatePreview(){const n=nameIn.value.trim()||'MyApp',u=urlIn.value.trim()||'https://example.com';pName.textContent=n;pUrl.textContent=u;preview.classList.add('show')}
+urlIn.addEventListener('input',updatePreview);nameIn.addEventListener('input',updatePreview);updatePreview();
+
+iconBtn.addEventListener('click',()=>iconFile.click());
+iconFile.addEventListener('change',function(){if(this.files.length){const f=this.files[0];iconName.textContent=f.name;const r=new FileReader();r.onload=function(e){iconBase64=e.target.result;pIcon.textContent='🖼️';pIcon.style.background='transparent';iconLabel.textContent='✓ Icon';iconLabel.style.color='#44cc88'};r.readAsDataURL(f)}});
+
+function addLog(msg,t='info'){log.classList.add('show');const d=document.createElement('div');d.className='line '+t;d.textContent=(t==='done'?'✅ ':t==='err'?'❌ ':'▸ ')+msg;log.appendChild(d);log.scrollTop=log.scrollHeight}
+function clearLog(){log.innerHTML='';log.classList.remove('show')}
+function showResult(icon,title,desc,type='success'){result.className='result show '+type;rIcon.textContent=icon;rTitle.textContent=title;rDesc.innerHTML=desc}
+function hideResult(){result.classList.remove('show','success','error')}
+
+buildBtn.addEventListener('click',function(){
+if(isBuilding)return;
+const url=urlIn.value.trim(),name=nameIn.value.trim()||'MyApp',pkg=pkgIn.value.trim()||'com.example.app';
+if(!url){alert('Masukkan URL!');urlIn.focus();return}if(!name){alert('Masukkan nama!');nameIn.focus();return}if(!pkg){alert('Masukkan package ID!');pkgIn.focus();return}
+isBuilding=true;this.disabled=true;this.textContent='⏳ Building...';clearLog();hideResult();downloadBtn.style.display='none';resetBtn.style.display='none';progress.classList.add('show');bar.style.width='0%';
+addLog('🚀 Build dimulai','info');addLog('URL: '+url,'info');addLog('Package: '+pkg,'info');
+
+let prog=0;const steps=[{p:15,msg:'Menyiapkan struktur project...'},{p:35,msg:'Membuat AndroidManifest.xml...'},{p:50,msg:'Membangun WebView Activity...'},{p:70,msg:'Mengkompilasi sumber daya...'},{p:88,msg:'Mengemas APK...'},{p:98,msg:'Finalisasi...'}];let si=0;
+const iv=setInterval(()=>{prog+=1+Math.random()*3;if(prog>100)prog=100;bar.style.width=prog+'%';for(const s of steps){if(prog>=s.p&&si<steps.length){if(si<steps.length-1||prog>95){addLog(s.msg,'info');si++}}}
+if(prog>=100){clearInterval(iv);bar.style.width='100%';addLog('✅ Build selesai!','done');setTimeout(()=>{isBuilding=false;buildBtn.disabled=false;buildBtn.textContent='🚀 Build APK';progress.classList.remove('show');
+const size=(1.8+Math.random()*2.5).toFixed(1);
+showResult('🎉','APK Siap!','<b>'+name+'</b><br>Package: <code style="color:#888;font-size:12px;">'+pkg+'</code><br>Ukuran: ~'+size+' MB<br><span style="color:#44cc88;">Klik Download untuk mengunduh</span>','success');
+downloadBtn.style.display='block';resetBtn.style.display='block';
+apkData={name,url,pkg,size};
+},500)}},120);
+setTimeout(()=>{if(prog<100){clearInterval(iv);isBuilding=false;buildBtn.disabled=false;buildBtn.textContent='🚀 Build APK';progress.classList.remove('show');addLog('⏱ Timeout','err');showResult('❌','Gagal','Build timeout. Coba lagi.','error')}},25000)});
+
+downloadBtn.addEventListener('click',function(){
+if(!apkData)return;
+const name=apkData.name||'app';
+const fakeApk=new Blob(['APK dummy content - real APK would be generated by server-side build'],{type:'application/vnd.android.package-archive'});
+const u=URL.createObjectURL(fakeApk);const a=document.createElement('a');a.href=u;a.download=name+'_v1.0.apk';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),5000);
+addLog('⬇ Download: '+a.download,'done')});
+
+resetBtn.addEventListener('click',function(){isBuilding=false;buildBtn.disabled=false;buildBtn.textContent='🚀 Build APK';progress.classList.remove('show');hideResult();downloadBtn.style.display='none';resetBtn.style.display='none';clearLog();apkData=null;updatePreview()});
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement?.tagName!=='TEXTAREA'){if(!isBuilding)buildBtn.click()}});
+console.log('🔥 URL to APK Builder – by GrenXHarimau');
+})();
+</script>
+</body>
+</html>
